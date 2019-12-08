@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
         exit(1);
     }
     
-    int sockfd, newsockfd, portno, shaSuccess, readFromServer, writeFromServer; // sockfd = file descriptor, newsockfd = updated file descriptor, portno = port num
+    int sockfd, newsockfd, portno, readFromServer, writeFromServer; // sockfd = file descriptor, newsockfd = updated file descriptor, portno = port num
     unsigned int secretKeyServer; // variable for secret key stored in server
     char sha [100];
     portno = atoi(argv[1]);
