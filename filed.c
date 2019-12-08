@@ -87,7 +87,7 @@ int main(int argc, char *argv[]){
         //printf("Request type: %i\n", varStruct.requestType);
         switch(varStruct.requestType)
         {
-            case 0:
+            case 0: //indicates newKey command
                 printf("Secret key = %i\n", secretKeyServer);
                 printf("Request type = newKey\n");
                 printf("Detail = %i\n", varStruct.newClientKey);
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]){
                 }
                 printf("--------------------------\n");
                 break;
-            case 1:
+            case 1: //indicates fileGet command
                 //printf("in case 1\n");
                 //printf("new client key: %i\n", varStruct.newClientKey);
                 if(varStruct.newClientKey == secretKeyServer){
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]){
                     break;
                 }
                 break;
-            case 2:
+            case 2: //indicates fileDigest command
                 if (varStruct.newClientKey == secretKeyServer) {
                     int savedOutput,savedError;
                     char shaSysCall[121];
@@ -210,6 +210,7 @@ int main(int argc, char *argv[]){
                 break;
                 
         }
+        // send information back to the client
         writeFromServer = write(newsockfd, &servertoclient, sizeof(servertoclient));
         if (writeFromServer < 0)
         {
