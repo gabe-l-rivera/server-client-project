@@ -29,7 +29,7 @@ void error(const char *message){ // error message for failed socket calls
 }
 
 int main(int argc, char *argv[]){
-    int sockfd, portno, writeFromClient, readFromClient, shaSuccess;
+    int sockfd, portno, writeFromClient, readFromClient;
     struct sockaddr_in serv_addr;
     struct hostent *server; // used to store info about a given host
     
@@ -50,10 +50,6 @@ int main(int argc, char *argv[]){
         error("Error openening socket.");
     }
     
-    if(server == NULL){
-        fprintf(stderr, "Error, no such host.");
-    }
-    
     /* Store arguments into variables to use for later. */
     // printf("File name = %s\n", fileGet.fileName);
     strcpy(fileDigest.fileName, argv[4]);
@@ -62,6 +58,10 @@ int main(int argc, char *argv[]){
     server = gethostbyname(argv[1]);
     /* Get the length of argv[3] and argv[4] */
     size_t secretKeyLength = strlen(argv[3]);
+    
+    if(server == NULL){
+        fprintf(stderr, "Error, no such host.");
+    }
     
     /* Ensure secretKey is a valid unsigned integer. */
     for (int i = 0; i < secretKeyLength; i++)
@@ -80,12 +80,7 @@ int main(int argc, char *argv[]){
     if(connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0){
         error("Connection failed.");
     }
-    //writeFromClient = write(sockfd, &fileDigest, sizeof(fileDigest));
-    if (writeFromClient < 0)
-    {
-        fprintf(stderr, "Error on write.\n");
-    }
-    
+   
     writeFromClient = write(sockfd, &fileDigest, sizeof(fileDigest));
     readFromClient = read(sockfd, &servertoclient, sizeof(servertoclient));
     
