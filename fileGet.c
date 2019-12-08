@@ -89,7 +89,7 @@ int main(int argc, char *argv[]){
         }
         printf("\n");
     }else{
-        printf("Failiure in fileGet.\n");
+        printf("Failiure.\n");
         
     }
     close(sockfd);
