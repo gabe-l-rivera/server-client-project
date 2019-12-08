@@ -63,7 +63,17 @@ int main(int argc, char *argv[]){
     if(server == NULL){
         fprintf(stderr, "Error, no such host.");
     }
-    
+    size_t secretKeyLength = strlen(argv[3]);
+    /*Ensure secretKey is a valid unsigned integer.*/
+    for (int i = 0; i < secretKeyLength; i++)
+    {
+        if (isdigit(argv[3][i]) == 0)
+        {
+            fprintf(stderr, "Invalid\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
     bzero((char*) &serv_addr, sizeof(serv_addr));   //clear serv_addr
     serv_addr.sin_family = AF_INET;
     bcopy((char *) server -> h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length); // copy n bytes from *server to serv_addr
@@ -89,7 +99,7 @@ int main(int argc, char *argv[]){
         }
         printf("\n");
     }else{
-        printf("Failiure.\n");
+        printf("Failiure in fileGet.\n");
         
     }
     close(sockfd);
