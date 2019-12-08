@@ -17,7 +17,16 @@ struct newKey { // structure for sending client variables
     int requestType, completionStatus;
     unsigned int secretKey, newClientKey;
     char fileName[100];
+    char buffer[100];
 } newKey;
+
+struct servertoclient { // servertoclient holds the byte-formatted message that is sent from server to client as a repsonce to a client call
+    char returnCode; // character for the purpose of it being one byte
+    char padding[3];
+    unsigned short int valLength;
+    char buffer[100];
+    char shaFileData[100];
+} servertoclient;
 
 
 void error(const char *msg){
@@ -26,39 +35,38 @@ void error(const char *msg){
 }
 
 int main(int argc, char *argv[]){
-    int sockfd, portno, writeFromClient;
+    int sockfd, portno, readFromClient,  writeFromClient;
     struct sockaddr_in serv_addr;
     struct hostent *server; // used to store info about a given host
-
+    
     /* Ensure the required parameters are provided. */
     if(argc < 5){
         printf("Error: Missing arguments.\n");
         exit(EXIT_FAILURE);
     }
-
-
+    
     if (strcmp(argv[0], "./newKey") == 0){
         newKey.requestType = 0; // indicates the ./newKey command
     }
-
+    
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if(sockfd < 0){
         error("Error openening socket.");
     }
-
+    
     /* Store arguments into variables to use for later. */
     newKey.secretKey = atoi(argv[3]);
-    printf("secret key: %i\n",newKey.secretKey);
+    //printf("secret key: %i\n",newKey.secretKey);
     newKey.newClientKey = atoi(argv[4]);
-    printf("new key: %i\n",newKey.newClientKey);
+    //printf("new key: %i\n",newKey.newClientKey);
     portno = atoi(argv[2]);
     server = gethostbyname(argv[1]);
-
-
+    
+    
     /* Get the length of argv[3] and argv[4] */
     size_t secretKeyLength = strlen(argv[3]);
     size_t newKeyLength = strlen(argv[4]);
-
+    
     /* Ensure secretKey is a valid unsigned integer. */
     for (int i = 0; i < secretKeyLength; i++)
     {
@@ -68,7 +76,7 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
         }
     }
-
+    
     /* Ensure newKey is a valid unsigned integer. */
     for (int i = 0; i < newKeyLength; i++)
     {
@@ -78,11 +86,11 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
         }
     }
-
+    
     if(server == NULL){
         fprintf(stderr, "Error, no such host.\n");
     }
-
+    
     bzero((char*) &serv_addr, sizeof(serv_addr));   //clear serv_addr
     serv_addr.sin_family = AF_INET;
     bcopy((char *) server -> h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length); // copy n bytes from *server to serv_addr
@@ -90,15 +98,25 @@ int main(int argc, char *argv[]){
     if(connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0){
         error("Connection failed.");
     }
-
-
+    
+    
     writeFromClient = write(sockfd, &newKey, sizeof(newKey));
-    if (writeFromClient < 0)
-    {
-        fprintf(stderr, "Error on write.\n");
+    readFromClient = read(sockfd, &servertoclient, sizeof(servertoclient));
+    
+    if (readFromClient < 0){
+        fprintf(stderr, "Read error.\n");
     }
-
+    if (writeFromClient < 0){
+        fprintf(stderr, "Write error.\n");
+    }
+    
+    if(servertoclient.returnCode == 0)
+        printf("Success.\n");
+    else
+        printf("Failiure.\n");
+    
     close(sockfd);
     return 0;
-
+    
 }
+
