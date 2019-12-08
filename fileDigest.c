@@ -1,3 +1,9 @@
+*/
+ File: fileDigest.c
+ Authors: Seth Rice and Gabe Rivera
+ Description: fileDigest.c asks the server to generate a cryptographic digest of the given file, the result of this invocation: /usr/bin/sha256sum fileName. The result is guaranteed to be 100 bytes or less. The client prints the result it receives from the server (as a string), or the single word failure.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
