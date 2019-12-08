@@ -32,7 +32,6 @@ int main(int argc, char *argv[]){
     int sockfd, portno, writeFromClient, readFromClient, shaSuccess;
     struct sockaddr_in serv_addr;
     struct hostent *server; // used to store info about a given host
-    char sha[100];
     
     /* Ensure the required parameters are provided. */
     if(argc < 5){
